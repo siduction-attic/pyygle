@@ -1,0 +1,5 @@
+doc				usr/share/pyygle
+src				usr/share/pyygle
+src/pyygle.py	usr/bin
+
+

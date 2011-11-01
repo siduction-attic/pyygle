@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<title>Documentation of pyygle</title>
+</head>
+<body>
+
+<!---===TOC===-->
+<div class="toc">
+<ul>
+<li> <a href="#C1_">1.   Introduction</a></li>
+<li> <a href="#C2_">2.   Database</a></li>
+<li> <a href="#C3_">3.   Application</a></li>
+<li> <a href="#C3_1_">3.1.  Usage</a></li>
+<li> <a href="#C3_2_">3.2.  Examples</a></li>
+<li> <a href="#C4_">4.   Word Normalizing</a></li>
+</ul>
+</div>
+<!---===TOC===-->
+<h1><a name="C1_">1.</a>   Introduction</h1>
+<div class="textblock">
+<p>pyygle is a simple search engine for text based files.</p>
+<p>Content files will be scanned and put into a database.</p>
+<p>The search space is a chapter which can be a part of a document
+or the whole document. If more than one words ar searched then all
+these words must lying in one chapter. In HTML documents chapters
+are starting with &lt;h1&gt; or &lt;h2&gt;.
+</p>
+<p>Words will be normalized while storing in the index and before
+searching. This will make better results: If "burn" has been searched
+"burned" will be found too. 
+</p>
+
+</div>
+<h1><a name="C2_">2.</a>   Database</h1>
+<div class="textblock">
+<pre>
+create table word (
+ word_id integer PRIMARY KEY,
+ word varchar(64),
+ count integer,
+ hits integer
+);
+create table document (
+ doc_id integer PRIMARY KEY,
+ doc_type integer,
+ link varchar(255),
+ date integer,
+ size integer,
+ doctree_id integer,
+ FOREIGN KEY(doctree_id) REFERENCES docTree(doctree_id)
+);
+create table chapter (
+ chapter_id integer PRIMARY KEY,
+ doc_id integer,
+ size integer,
+ anchor varchar(255),
+ pure_text text,
+ rating integer,
+ title varchar(255),
+ FOREIGN KEY(doc_id) REFERENCES document(doc_id)
+ );
+create table wordOfChapter (
+ word_id integer,
+ chapter_id integer,
+ count integer,
+ FOREIGN KEY(word_id) REFERENCES word(word_id),
+ FOREIGN KEY(chapter_id) REFERENCES chapter(chapter_id)
+);
+create table normOfWord (
+ variant varchar(64),
+ word_id integer,
+ FOREIGN KEY(word_id) REFERENCES word(word_id)
+);
+create table rawWord (
+ word varchar(64)
+);
+create table docTree (
+ doctree_id integer PRIMARY KEY,
+ url varchar(255),
+ path varchar(255)
+);
+</pre>
+</div>
+<h1><a name="C3_">3.</a>   Application</h1>
+<div class="textblock">
+The application is pyygle.py. 
+</div>
+<h2><a name="C3_1_">3.1.</a>  Usage</h1>
+<div class="textblock">
+Call it without arguments and you well see this short message:
+<pre>
+pyyggle, a simple search engine (C) Hamatoma 2012 Version %s
+usage: %s &lt;global_opts&gt; mode &lt;args&gt;
+&lt;mode&gt;:
+  db      adminstrates the database
+  parse   traverse a file tree for indexing text files
+  search  search in the database
+&lt;global_opts&gt;:
+  --db=&lt;path&gt;          name of the database. Default: /var/lib/pyyggle/pyyggle.db
+  --logfile=&lt;file&gt;     name of the logfile. Default: /tmp/pyyggle.log
+  --quiet              no logging of more info
+&lt;db-mode-args&gt;:
+  create               initializes the database: create the tables
+  import-norm &lt;file&gt;   reads &lt;file&gt; and put the entries into the table normOfWord
+  statistic            displays some statistic data
+  export-raw-words &lt;file&gt; 
+                       writes the table rawWord into &lt;file&gt;
+&lt;parse-mode-args&gt;:
+  fill-db [--add] [&lt;directory&gt; [&lt;pattern&gt;]]
+                       scans the directory and inserts the data into the db
+    &lt;directory&gt;        the start of the file search. All subdirectories will be
+                       inspected too. Default: the current directory
+    &lt;pattern&gt;          pattern is a regular expression for the files to index
+    --add              the directory data will be added: normally the db 
+                       will be created first
+&lt;serch-mode-args&gt;:
+  &lt;search-opts&gt; &lt;phrase_1&gt; ...
+  --url=&lt;url&gt;          the prefix of the links in the result file
+  --output=&lt;file&gt;      the result will be written to this file. Default: stdout
+  --browser=&lt;browser&gt;  the result will be shown with this browser
+  --no-frame           the result has pure info, no html header
+  &lt;phrase_N&gt;:          a word: no prefix
+                       a excludes word: prefix '~'
+                       an exact matching phrase:  prefix: '='
+example for a search:   
+burn =iso-file        finds the following chapter: "burn" finds "burned" too, "iso-file" must be exact.
+   The downloaded file must be burned as an ISO-file. ....   
+</pre>
+</div>
+<h2><a name="C3_2_">3.2.</a>  Examples</h2>
+<div class="textblock">
+Shows some interesting data of a db:
+<pre>
+pyyggle.py --db=/var/lib/sidu-manual/manual.db db statistic 
+</pre>
+Builds a new database with all files from a directory tree:
+<pre>
+pyyggle.py --db=/var/lib/sidu-manual/manual.db parse fill-db /usr/share/sidu-manual/statics/de "-de.htm"
+</pre>
+Adds some other files to the existing database:
+<pre>
+pyyggle.py --db=/var/lib/sidu-manual/manual.db parse fill-db --add /usr/share/sidu-manual/debian
+</pre>
+Search for a chapter containing the words "burn" and "iso". The result should be displayed with iceweasel:
+<pre>
+pyyggle.py --db=/var/lib/sidu-manual/manual.db search --browser=iceweasel burn iso
+</pre>
+</div>
+<h1><a name="C4_">4.</a>   Word Normalizing</h1>
+<div class="textblock">
+The database must be populated with data that a comfortable search could be done:
+All forms of a word must be imported into the table normOfWord. This can be done with:
+<pre>
+pyyggle.py --db=/var/lib/sidu-manual/manual.db db import-normalized=/usr/share/sidu-manual/resources/normalized_de.txt 
+</pre>
+The format of the file: each forms of one verb should be listed in one line separated by a whitespace 
+(blank or tabulator). Lines beginning with # are comments and will be ignored.<br/>
+Example:
+<pre>
+burn burned burns burner
+take took taken
+</pre>
+</div>

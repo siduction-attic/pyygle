@@ -1,0 +1,19 @@
+Source: pyygle
+Section: unknown
+Priority: extra
+Maintainer: J. Hamatoma <hama@siduction.net>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.3
+Homepage: <insert the upstream URL, if relevant>
+Vcs-git:  git://git3@git.siduction.org:code/pyygle
+Vcs-Browser: http://git.siduction.org/?p=code/pyygle.git
+
+Package: pyygle
+Architecture: all
+Depends: ${misc:Depends},
+    python (>= 2.7)
+Description: A little search engine
+ This is a search engine with file parser for xml/html and text files.
+ The data will be stored in a database for a quick search.
+ If prepared a comfortable search is possible with normalized word forms:
+ Search "burn" and find "burned".
