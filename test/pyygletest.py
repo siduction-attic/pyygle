@@ -108,6 +108,31 @@ class Test(unittest.TestCase):
         prog.run(argv)
         self.compareFiles(fnOutput, 'resources/pyygle_doc_02.html')
 
+    def writeFile(self, filename, content):
+        fp = open(filename, "w")
+        fp.write(content)
+        fp.close()
+        
+    def testSearchQueryFile(self):
+        dbName = '/tmp/pyygle-doc.db'
+        logname = '/tmp/testpyggle.03.log'
+        fnOutput = '/tmp/pyygle_test.04.htm'
+        prog = Pyygle()
+        fnQuery = '/tmp/pyygle_query_01.txt'
+        
+        self.writeFile(fnQuery, '''
+db
+or
+database
+and
+word
+-table
+''')
+        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'search', 
+            '--output=' + fnOutput, '--url=file://home/wsl6/py/pyygle/test/',
+            '--no-frame', '--query=' + fnQuery]
+        prog.run(argv)
+        self.compareFiles(fnOutput, 'resources/pyygle_doc_03.html')
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDb']
     unittest.main()

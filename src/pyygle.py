@@ -53,11 +53,12 @@ usage: %s <global_opts> mode <args>
                        will be created first
     --no-ext-is-text   if there is no file extension the file is treated as a text file
 <serch-mode-args>:
-  <search-opts> <phrase_1> ...
+  <search-opts> [<phrase_1> ...]
   --url=<url>          the prefix of the links in the result file
   --output=<file>      the result will be written to this file. Default: stdout
   --browser=<browser>  the result will be shown with this browser
   --no-frame           the result has pure info, no html header
+  --query=<file>       the search phrases are in this file. Each phrase in a single line
   <phrase_N>:          a word: no prefix
                        a excludes word: prefix '~'
                        an exact matching phrase:  prefix: '='
@@ -215,7 +216,8 @@ class FileAdmin(Task):
 class Search(Task):
     def __init__(self, opts, logger):
         Task.__init__(self, opts, logger)
-        
+     
+       
     def run(self, opts, argv):
         if len(argv) == 0:
             helpMe(opts, 'missing arguments')
@@ -225,6 +227,7 @@ class Search(Task):
         output = None
         browser = None
         withFrame = True
+        query = None
         while self.hasOption(argv):
             (keyword, value) = self._currentOption
             if keyword == 'url':
@@ -234,25 +237,33 @@ class Search(Task):
             elif keyword == 'browser':
                 browser = value
             elif keyword == 'no-frame':
-                browser = value
+                if value is not None:
+                    helpMe(opts, 'no = possible in --no-frame')
+                withFrame = False
+            elif keyword == 'query':
+                query = value
+                if query is None:
+                    helpMe(opts, 'no file given in --query')
+                elif not os.path.exists(query):
+                    helpMe(opts, 'query file does not exist')
+                fp = open(query)
+                lines = fp.readlines()
+                fp.close()
+                query = []
+                for line in lines:
+                    query += (line.strip(), )
             else:
                 helpMe(opts, 'unknown option for search: ' + keyword)
-        words = ()
-        phrases = ()
-        excludes = ()
-        while len(argv) > 0:
-            arg = argv.pop(0)
-            prefix = arg[0:1]
-            if prefix == '~':
-                excludes += (arg[1:],)
-            elif prefix == '=':
-                phrases += (arg[1:],)
-            else:
-                words += (arg,)
-        if len(words) + len(phrases) == 0:
-            helpMe(opts, 'No search words or phrases given')
+        if query is not None:
+            if len(argv) > 0:
+                helpMe(opts, 'no phrases allowd if --query given')
+        elif len(argv) == 0:
+            helpMe(opts, 'no phrases given')
+        else:
+            query = argv
+        
         engine = SearchEngine(self._db)
-        html = engine.search(words, phrases, excludes, url, withFrame)
+        html = engine.search(query, url, withFrame)
         if browser != None and output == None:
             output = '/tmp/pyygle_result.html'
         if output == None:

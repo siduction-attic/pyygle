@@ -1,3 +1,12 @@
+pyygle (0.2) unstable; urgency=low
+
+  * code moved from Sqlite3Db to SqlDb
+  * chapters will be sorted by ranking
+  * queries can fetched from a file (--query)
+  * query language: 'or' and 'and' and '-'
+
+ -- J. Hamatoma <hama@siduction.net>  Sat, 01 Dec 2012 22:58:04 +0100
+
 pyygle (0.1) unstable; urgency=low
 
   * Initial release

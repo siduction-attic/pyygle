@@ -123,14 +123,19 @@ class SearchEngine(object):
         html += '<p class="sm_doc">%s</p>%s' % (docName, "\n")
         hitList = ()
         wordList = None
+        matcher = re.compile(r'((or|and|[&|])$|-)', re.IGNORECASE)
         for word in words:
-            hit = self.findFirstHitOfTheWord(word, source)
-            if hit != None:
-                hitList += (hit,)
-                if wordList is None:
-                    wordList = hit[2]
-                else:
-                    wordList += '|' + hit[2] 
+            word = word.strip()
+            if word != '' and not matcher.match(word):
+                if word.startswith('='):
+                    word = word[1:]
+                hit = self.findFirstHitOfTheWord(word, source)
+                if hit != None:
+                    hitList += (hit,)
+                    if wordList is None:
+                        wordList = hit[2]
+                    else:
+                        wordList += '|' + hit[2] 
         hitList = sorted(hitList, cmpTuples)
         hitList = self.joinHits(hitList)
         if hitList is None:
@@ -181,12 +186,9 @@ class SearchEngine(object):
         ''' % (title,)
         return rc
     
-    def search(self, words, phrases, excluded, url, withFrame):
+    def search(self, phrases, url, withFrame):
         '''Search for all chapters containing the given words and phrases.
-        @param words: words to search: contain alfanumeric characters only.<br>
-                        Similar words will be found too (normalizing)
-        @param phrases: strings to search: can contain any characters.
-        @param excluded: words which must not exist in a matching chapter
+        @param phrases: words or phrases to search or excluding words
         @param url:    None or the prefix of the links in the result
         @param withFrame: True: result is a valid html document.<br>
                         False: the result contains not the <html><body>...</html> frame 
@@ -195,11 +197,8 @@ class SearchEngine(object):
             phrases = None
         count =  self._resultsPerPage if phrases is None else 500
         db = self._db
-        searchWords = words
-        if phrases is None:
-            phrases = () 
         html = '' if not withFrame else self.buildHtmlHeader(None)
-        chapters = db.find(searchWords, phrases, True, excluded, self._indexCurrentPage, self._indexCurrentPage + count)
+        chapters = db.find(phrases, self._indexCurrentPage, self._indexCurrentPage + count)
         ix = 0
         if chapters is not None:
             for chapter in chapters:
@@ -207,7 +206,7 @@ class SearchEngine(object):
                 (path, sep, node) = docName.rpartition('/')
                 anchor = '' if chapter._anchor == None else '#' + chapter._anchor
                 link = url + docName + anchor
-                hits = self.findHits(words, chapter._pureText, chapter._title, node, link)
+                hits = self.findHits(phrases, chapter._pureText, chapter._title, node, link)
                 if hits != None:
                     ix += 1
                     if ix >= self._indexCurrentPage:

@@ -3,12 +3,12 @@ Created on 09.11.2012
 
 @author: hm
 '''
-import sys, os.path
+import sys, os.path, re
 import sqlite3
 import db
-from db import Chapter, Document, DocTree
+from db import Chapter, Document, DocTree, SqlDB
 
-class SqLite3Db:
+class SqLite3Db (SqlDB):
     '''
     classdocs
     '''
@@ -122,14 +122,13 @@ create table docTree (
         @param url: http URL of the document tree
         @param path: path in the local filesystem
         '''
-        sql = '''insert into doctree (url, path) 
-            values(?, ?);'''
+        sql = self.buildSelectDocTree()
         cursor = self.getCursor()
         cursor.execute(sql, (url if url != None else 'NULL',
                 path if path != None else 'NULL'))
         self._currentDocTree = db.DocTree(cursor.lastrowid, url, path) 
         self.commit()
-        
+      
     def putDocument(self, link, date, docType, size):
         '''Stores a document and defines the current document.
         @param link: URL of the document
@@ -137,9 +136,8 @@ create table docTree (
         @param docType: 1: raw text 2: xml
         @param size: the document size
         '''
-        sql = '''insert into document (doc_type, link, date, size, doctree_id) 
-            values(?, ?, ?, ?, ?);'''
         cursor = self.getCursor()
+        sql = self.buildSelectDocument()
         cursor.execute(sql, (docType, link, date, size, self._currentDocTree._id))
         self._currentDocument = db.Document(cursor.lastrowid, docType, 
             link, date, size, self._currentDocTree._id)
@@ -153,13 +151,13 @@ create table docTree (
         @param rating: the rating of the chapter. 
                     Can change the order of the search results
         '''
-        sql = 'insert into chapter(doc_id,size,anchor,title,pure_text)values(?,?,?,?,?)' 
+        sql = self.buildInsertChapter() 
         cursor = self.getCursor()
-        cursor.execute(sql, (self._currentDocument._id, len(text), anchor, title, text))
+        cursor.execute(sql, (self._currentDocument._id, len(text), anchor, title, text, rating))
         self._currentChapter = db.Chapter(cursor.lastrowid,
             self._currentDocument._id, len(text), anchor, title, text, rating)
         self.commit()
-        
+     
     def putWord(self, word, insertIntoChapter = True, canExist = True):
         '''Stores the word.
         If the word exists in the table word the field count will be incremented.
@@ -173,28 +171,26 @@ create table docTree (
         insertIntoWord = True
         if canExist:
             # We try to increment the count.
-            sql = 'select word_id from word where word=?'
+            sql = self.buildSelectWord()
             cursor.execute(sql, (word,))
             wordId = cursor.fetchone()
             if wordId != None:
                 rc = wordId[0]
-                sql = 'update word set count=count+1 where word_id=%d' % (rc,)
+                sql = self.buildUpdateWordCount(rc)
                 cursor.execute(sql)
                 insertIntoWord = False
         if insertIntoWord:
-            sql = 'insert into word (word, count, hits)values(?, ?, 0)' 
+            sql = self.buildInsertWord()
             cursor.execute(sql, (word, 1 if canExist else 0))
             rc = cursor.lastrowid
         if insertIntoChapter:
             count = self._conn.total_changes
-            sql = ('update wordOfChapter set count=count+1 where word_id=%d and chapter_id=%d'
-                % (rc, self._currentChapter._id))
+            sql = self.buildUpdateWordOfChapter(rc, self._currentChapter._id)
             cursor.execute(sql)
             # Update successful?
             if count == self._conn.total_changes:
                 # No, then we will insert
-                sql = ('insert into wordofchapter (word_id, chapter_id, count)values(%d, %d, 1)'
-                       % (rc, self._currentChapter._id))
+                sql = self.buildInsertWordOfChapter(rc, self._currentChapter._id)
                 cursor.execute(sql)
         if self._commitOften:
             self._conn.commit()
@@ -206,10 +202,10 @@ create table docTree (
         '''
         cursor = self.getCursor()
         # We try to increment the count.
-        sql = 'select count(*) from rawWord where word=?'
+        sql = self.buildSelectCountRawWords()
         cursor.execute(sql, (word,))
         if cursor.fetchone()[0] == 0:
-            sql = 'insert into rawWord (word)values(?)' 
+            sql = self.buildInsertRawWords()
             cursor.execute(sql, (word,))
 
     def putVariants(self, norm, variants):
@@ -219,10 +215,9 @@ create table docTree (
         '''
         cursor = self.getCursor()
         word_id = self.putWord(norm, False, False)
-        sql = 'insert into normOfWord (word_id, variant) values(?, ?)'
+        sql = self.buildInsertVariants()
         for variant in variants:
             cursor.execute(sql, (word_id, variant))    
-           
     
     def getCount(self, table):
         '''Returns the row count of the given table.
@@ -269,7 +264,7 @@ create table docTree (
         @param docs:  the dirctionary of documents
         '''
         docTrees = dict()
-        sql = 'select doctree_id, url, path from doctree where doctree_id in (%s)' % (docTreeList,)
+        sql = self.buildSelectDocTrees(docTreeList)
         cursor.execute(sql)
         while True:
             row = cursor.fetchone()
@@ -313,15 +308,14 @@ create table docTree (
         self.completeDocTrees(cursor, docTreeList, documents)        
         for chapter in chapters:
             chapter._document = documents[chapter._docId]
-                
+    
     def getChapters(self, idList, cursor):
         '''Builds a list of chapters with a given id list
         @param idList: a comma separated list of chapter ids
         @param cursor: the db cursor
         @return: a list of Chapter instances
         '''
-        sql = '''select chapter_id,doc_id,size,anchor,title,pure_text,rating 
-            from chapter where chapter_id in (%s)''' % (idList,)
+        sql = self.buildSelectChapter(idList)
         chapters = ()
         docIds = ()
         cursor.execute(sql)
@@ -343,45 +337,17 @@ create table docTree (
         self.completeDocuments(cursor, docList, chapters)
         return chapters
 
-    def find(self, words, phrases, andCondition, excluded, first, count):
+    def find(self, phrases, first, count):
         '''Finds a list of chapters matching the search conditions.
-        @param words:        list of words to search
-        @param phrases:      list of phrases to search
-        @param andCondition: True: all words and phrases must be present in the chapter
-                            thereby the chapter matches.
-        @param excluded: array of words which must not exist in a matching 
-                            chapter
+        @param phrases:      list of phrases / words to search.<br>
+                            phrases starts with '=', excluding words with '-'
         @param first: the offset of the result list inside the matching list.
                             This is for pagenation.
         @param count: the maximal number of elements in the result
         @return None: nothing found.<br>
                 otherwise: the list of Chapter instances
         '''
-        if not andCondition:
-            wordList = ''
-            for word in words:
-                wordList += "'" + self.normalizeWord(word) + "',"
-            wordList = wordList[0:-1]
-            sql = '''select chapter_id from word w, wordOfchapter x
-                where w.word in (%s) and w.word_id=x.word_id
-            ''' % (wordList,)
-        else :
-            sql = None
-            for word in words:
-                if sql is None:
-                    sql = ''
-                else:
-                    sql += "\nintersect "
-                word = self.normalizeWord(word)
-                sql += '''select chapter_id from word w, wordOfchapter x
-                    where w.word = '%s' and w.word_id=x.word_id''' % (word,)
-            for phrase in phrases:
-                if sql is None:
-                    sql = ''
-                else:
-                    sql += "\nintersect "
-                phrase = '%' + phrase.replace('%', '_').replace("'", '_') + '%'
-                sql += "select chapter_id from chapter where pure_text like '" + phrase + "'"
+        sql = self.buildSelectChapters(phrases)
         cursor = self.getCursor()
         cursor.execute(sql)
         rows = cursor.fetchmany(self._maxRowsToSort)
@@ -397,7 +363,7 @@ create table docTree (
                 idList += str(row[0])
             chapters = self.getChapters(idList, cursor)
         return chapters 
-        
+    
     def normalizeWord(self, word):
         '''Searches for a normalized form of the word.
         @param word:    word to search
@@ -405,15 +371,14 @@ create table docTree (
                 <normalized word>: otherwise
         '''
         word = word.lower()
-        sql = '''select word from word, normOfWord
-            where variant=? and word.word_id=normOfWord.word_id'''
+        sql = self.buildSelectNormWord()
         cursor = self.getCursor()
         cursor.execute(sql, (word, ))
         found = cursor.fetchone()
         if found != None:
             word = found[0]
         return word
-
+    
     def getRelatedWords(self, word):
         '''Returns all words which have the same normalized form.
         Example: word='breaks' rc='breaks|break|broken'
@@ -421,11 +386,7 @@ create table docTree (
         @return: a list of words with the same normalized form as word separated by '|'
         '''
         words = word.lower()
-        sql = '''select variant from normofword where word_id in
-            (select word_id from normofword where variant=?)
-            union
-            select w.word from normofword n, word w 
-            where n.variant=? and n.word_id=w.word_id'''
+        sql = self.buildSelectRelatedWords()
         cursor = self.getCursor()
         cursor.execute(sql, (words, words))
         while True:
@@ -434,11 +395,7 @@ create table docTree (
                 break
             words += '|' + raw[0]
         if words.find('|') < 0:
-            sql = '''select variant from normofword where word_id in
-                (select word_id from word where word=?)
-                union
-                select w.word from normofword n, word w 
-                where n.variant=? and n.word_id=w.word_id'''
+            sql = self.buildSelectRelatedWords2()
             cursor = self.getCursor()
             cursor.execute(sql, (words, words))
             while True:

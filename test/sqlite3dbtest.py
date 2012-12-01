@@ -52,7 +52,7 @@ class Test(unittest.TestCase):
         db.putVariants('a', ('an', ))
         db.putDocTree('http://sidu-manual/index.php', '/usr/share/sidu-manual/static/de')
         db.putDocument('/tmp/docu1', '2012-11-11 8:00:00', 2, 123);
-        db.putChapter('chapter1', 'Demo-Header', 'Chapter 1 This is an example of a text', 20)
+        db.putChapter('chapter1', 'Demo-Header', 'Chapter 1 This is an example of a good text', 20)
         db.putWord(db.normalizeWord('Chapter'))
         db.putWord(db.normalizeWord('1'))
         db.putWord(db.normalizeWord('This'))
@@ -61,8 +61,9 @@ class Test(unittest.TestCase):
         db.putWord(db.normalizeWord('example'))
         db.putWord(db.normalizeWord('of'))
         db.putWord(db.normalizeWord('a'))
+        db.putWord(db.normalizeWord('good'))
         db.putWord(db.normalizeWord('text'))
-        db.putChapter('chapter2', 'Demo-2', 'Chapter 2 This is an example of a text', 10)
+        db.putChapter('chapter2', 'Demo-2', 'Chapter 2 This is an example of a bad text', 10)
         db.putWord(db.normalizeWord('Chapter'))
         db.putWord(db.normalizeWord('2'))
         db.putWord(db.normalizeWord('This'))
@@ -71,6 +72,7 @@ class Test(unittest.TestCase):
         db.putWord(db.normalizeWord('example'))
         db.putWord(db.normalizeWord('of'))
         db.putWord(db.normalizeWord('a'))
+        db.putWord(db.normalizeWord('bad'))
         db.putWord(db.normalizeWord('text'))
         db.putDocument('/tmp/docu2', '2012-11-11 8:00:00', 2, 123);
         db.putChapter('chapter2-1', 'Demo 2-1', 'Chapter: Any other text', 30)
@@ -81,19 +83,15 @@ class Test(unittest.TestCase):
         statistic = db.getStatistic()
         self.assertEquals(2, statistic._docs)
         self.assertEquals(3, statistic._chapters)
-        self.assertEquals(11, statistic._words)
+        self.assertEquals(13, statistic._words)
         db.close()
 
-    def test30Find(self):
-        db = self.connect()
-        words = ('Chapter', 'text')
-        phrases = (' ', 'a')
-        chapters = self._db.find(words, phrases, True, None, 0, 100)
+    def checkChapter(self, chapters):
         count = 0
         for chapter in chapters:
             if chapter._anchor == 'chapter1':
                 self.assertEqual(chapter._pureText, 
-                    'Chapter 1 This is an example of a text')
+                    'Chapter 1 This is an example of a good text')
                 doc = chapter._document
                 self.assertTrue(doc != None)
                 self.assertEqual(doc._link, '/tmp/docu1')
@@ -105,7 +103,7 @@ class Test(unittest.TestCase):
                 count += 1
             elif chapter._anchor == 'chapter2':
                 self.assertEqual(chapter._pureText, 
-                    'Chapter 2 This is an example of a text')
+                    'Chapter 2 This is an example of a bad text')
                 self.assertEqual(chapter._document._link, '/tmp/docu1')
                 self.assertEqual('Demo-2', chapter._title)
                 count += 1
@@ -116,7 +114,54 @@ class Test(unittest.TestCase):
                 self.assertEqual('Demo 2-1', chapter._title)
             else:
                 self.assertTrue(False)
-        self.assertEqual(3, count)
+        return count
+        
+    def test30Find(self):
+        db = self.connect()
+        if True:
+            phrases = ('Chapter', '=a', 'text')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(3, count)
+
+            phrases = ('Chapter', '=a', 'text', '-bad')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(2, count)
+
+            phrases = ('=good t', 'or', 'bad')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(2, count)
+
+            phrases = ('=good x', 'or', 'bad')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(1, count)
+
+            phrases = ('-good', 'text', 'example')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(1, count)
+
+        if False:
+            phrases = ('(', 'good', 'or', 'bad', ')', 'and', 'example')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(2, count)
+    
+            phrases = ('(', 'good', '|', 'bad', ')', 'example')
+            chapters = self._db.find(phrases, 0, 100)
+            self.assertNotEqual(None, chapters)
+            count = self.checkChapter(chapters)
+            self.assertEqual(2, count)
+
         db.close()
     
     def test40Variants(self):
