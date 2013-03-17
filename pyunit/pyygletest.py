@@ -5,8 +5,8 @@ Created on 17.11.2012
 '''
 import unittest,os.path
 
-import pyygle
-from pyygle import Pyygle
+import source.pyygle
+from source.pyygle import Pyygle
 
 class Test(unittest.TestCase):
 

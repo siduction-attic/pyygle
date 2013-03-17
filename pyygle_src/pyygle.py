@@ -12,7 +12,7 @@ import sqlite3db
 from filecrawler import FileCrawler, RExprDocFinder
 from searchengine import SearchEngine
 
-VERSION = '0.1 (2012.11.11)'
+VERSION = '0.3 (2012.12.01)'
 class Options:
     def __init__(self, progName):
         self._progName = progName
@@ -43,6 +43,7 @@ usage: %s <global_opts> mode <args>
   statistic            displays some statistic data
   export-raw-words <file> 
                        writes the table rawWord into <file>
+  export-words <file>  writes the table word into <file>
 <parse-mode-args>:
   fill-db [--add] [--no-ext-is-text] [<directory> [<pattern>]]
                        scans the directory and inserts the data into the db

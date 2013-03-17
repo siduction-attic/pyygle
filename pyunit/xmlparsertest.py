@@ -4,8 +4,8 @@ Created on 14.11.2012
 @author: hm
 '''
 import unittest
-from xmlparser import XmlParser
-from pyygle import Logger
+from source.xmlparser import XmlParser
+from source.pyygle import Logger
 
 class DummyDb:
     def __init__(self):

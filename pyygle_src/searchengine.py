@@ -186,12 +186,13 @@ class SearchEngine(object):
         ''' % (title,)
         return rc
     
-    def search(self, phrases, url, withFrame):
+    def search(self, phrases, url, withFrame, urlHandler = None):
         '''Search for all chapters containing the given words and phrases.
         @param phrases: words or phrases to search or excluding words
         @param url:    None or the prefix of the links in the result
         @param withFrame: True: result is a valid html document.<br>
-                        False: the result contains not the <html><body>...</html> frame 
+                        False: the result contains not the <html><body>...</html> frame
+        @param urlHandler: None or an object with a method buildUrl(url) 
         '''
         if phrases != None and len(phrases) == 0:
             phrases = None
@@ -205,7 +206,10 @@ class SearchEngine(object):
                 docName = chapter._document._link
                 (path, sep, node) = docName.rpartition('/')
                 anchor = '' if chapter._anchor == None else '#' + chapter._anchor
-                link = url + docName + anchor
+                if urlHandler != None:
+                    link = urlHandler.buildUrl(docName, anchor)
+                else:
+                    link = url + docName + anchor
                 hits = self.findHits(phrases, chapter._pureText, chapter._title, node, link)
                 if hits != None:
                     ix += 1
@@ -216,7 +220,7 @@ class SearchEngine(object):
         if withFrame:
             html += "</body>\n</html>\n"
         return html
-            
+
             
           
         

@@ -4,9 +4,11 @@ Created on 15.11.2012
 @author: hm
 '''
 import unittest, os.path
-from pyygle import Logger
-from filecrawler import RExprDocFinder, FileCrawler;
-import pyygle
+
+from source.pyygle import Logger
+from source.filecrawler import RExprDocFinder, FileCrawler
+#import src.filecrawler
+#import src.pyygle
 
 class DummyXmlParser:
     def __init__(self):
@@ -58,7 +60,7 @@ class Test(unittest.TestCase):
             os.mkdir(name)
             
     def testFileCrawler(self):
-        logger = pyygle.Logger("/tmp/test.log")
+        logger = Logger("/tmp/test.log")
         base = '/tmp/test.crawler'
         self.buildDir(base)
         f1 = base + '/x1.xml'

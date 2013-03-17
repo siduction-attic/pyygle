@@ -1,3 +1,10 @@
+pyygle (0.3.1) UNRELEASED; urgency=low
+
+  * package renamed to pyygle_src
+  * application specific URL handling for links
+
+ -- J. Hamatoma <hama@siduction.net>  Sun, 17 Mar 2013 19:13:05 +0100
+
 pyygle (0.2) unstable; urgency=low
 
   * code moved from Sqlite3Db to SqlDb

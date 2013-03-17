@@ -4,20 +4,20 @@ Created on 10.11.2012
 @author: hm
 '''
 import unittest, os.path
-import sqlite3db
-import pyygle
+from source.sqlite3db import SqLite3Db
+from source.pyygle import Logger
 
 class Test(unittest.TestCase):
 #    def __init__(self):
 #        self._db = None
 #        pass
     def init(self):
-        self._logger = pyygle.Logger('/tmp/test.log')
+        self._logger = Logger('/tmp/test.log')
         self._dbName = '/tmp/sqlite3test.db'
         
     def connect(self):
         self.init()
-        db = sqlite3db.SqLite3Db(self._dbName, self._logger)
+        db = SqLite3Db(self._dbName, self._logger)
         db._commitOften = False
         self._db = db
         return db
@@ -192,6 +192,17 @@ class Test(unittest.TestCase):
         self.assertTrue(wordList.find('cba') >= 0)
         db.close()
         
+    def test70writeWords(self):
+        db = self.connect()
+        filename = '/tmp/words_test_01.txt'
+        db.writeWords(filename, True)
+        fp = open(filename)
+        lines = fp.readlines()
+        self.assertEquals("1\t1\t0\n", lines[0])
+        self.assertEquals(14, len(lines))
+        self.assertEquals("this\t2\t0\n", lines[-1])
+        
 if __name__ == "__main__":
+    
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
