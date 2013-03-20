@@ -4,20 +4,20 @@ Created on 10.11.2012
 @author: hm
 '''
 import unittest, os.path
-import sqlite3db
-import pyygle
+from source.sqlite3db import SqLite3Db
+from source.pyygle import Logger
 
 class Test(unittest.TestCase):
 #    def __init__(self):
 #        self._db = None
 #        pass
     def init(self):
-        self._logger = pyygle.Logger('/tmp/test.log')
+        self._logger = Logger('/tmp/test.log')
         self._dbName = '/tmp/sqlite3test.db'
         
     def connect(self):
         self.init()
-        db = sqlite3db.SqLite3Db(self._dbName, self._logger)
+        db = SqLite3Db(self._dbName, self._logger)
         db._commitOften = False
         self._db = db
         return db

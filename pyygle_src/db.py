@@ -166,6 +166,13 @@ class SqlDB:
         sql = 'select word_id from word where word=?'
         return sql
     
+    def buildSelectAllWords(self, allCols):
+        if allCols:
+            sql = 'select word,count,hits from word order by word;'
+        else:
+            sql = 'select word from word order by word;'
+        return sql
+    
     def buildUpdateWordCount(self, value):
         sql = 'update word set count=count+1 where word_id=%d' % (value,)
         return sql        

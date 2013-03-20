@@ -405,4 +405,24 @@ create table docTree (
                 words += '|' + raw[0]
             
         return words
+    
+    def writeWords(self, filename, allCols):
+        '''Writes the content of the table word into a file.
+        @param filename    the name of the output file
+        @param allCols     true: all columns will be put to the file
+                           false: only the word is put 
+        '''
+        fp = open(filename, "w")
+        sql = self.buildSelectAllWords(allCols)
+        cursor = self.getCursor()
+        cursor.execute(sql)
+        while True:
+            raw = cursor.fetchone()
+            if raw == None:
+                break
+            if not allCols:
+                fp.write(raw[0] + "\n")
+            else:
+                fp.write("%s\t%d\t%d\n" % raw)
+        fp.close()
         
