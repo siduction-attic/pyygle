@@ -6,6 +6,10 @@ Files: *
 Copyright: 2012 J. Hamatoma <hama@siduction.net>
 License: GPL-3.0+
 
+Files: debian/*
+Copyright: 2013      Alf Gaida <agaida@siduction.org>
+           2012-2013 J. Hamatoma <hama@siduction.net>
+License: GPL-3.0+
 
 License: GPL-3.0+
  This program is free software: you can redistribute it and/or modify
@@ -23,4 +27,3 @@ License: GPL-3.0+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
-   

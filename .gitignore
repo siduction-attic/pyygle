@@ -1,5 +1,10 @@
+## dont' version settings and runtime stuff
 *.pyc
 *~
 .settings
 
-
+## don't version debian-build crap
+debian/files
+debian/pyygle.debhelper.log
+debian/pyygle.substvars
+debian/pyygle/

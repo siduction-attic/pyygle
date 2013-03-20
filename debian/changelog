@@ -1,3 +1,27 @@
+pyygle (0.3.3) unstable; urgency=low
+
+  * added a debian-section to debian/copyrights
+  * debian/control homepage added 
+  * leftover lintian warning, this should be fixed: 
+    W: pyygle: script-with-language-extension usr/bin/pyygle.py
+  * .gitignore added
+  * closes #1119
+
+ -- Alf Gaida <agaida@siduction.org>  Thu, 21 Mar 2013 00:37:07 +0100
+
+pyygle (0.3.2) unstable; urgency=low
+
+  * added myself as uploader, fixes 
+    - W: pyygle source: changelog-should-mention-nmu
+    - W: pyygle source: source-nmu-has-incorrect-version-number 0.3.1 
+  * fixed and extended short description, fixes
+    W: pyygle: description-synopsis-starts-with-article
+  * set Section: web, fixes
+    E: pyygle: section-is-dh_make-template
+  * set compat-level to 9 
+
+ -- Alf Gaida <agaida@siduction.org>  Wed, 20 Mar 2013 23:54:31 +0100
+
 pyygle (0.3.1) unstable; urgency=low
 
   [ J. Hamatoma ]
