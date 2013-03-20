@@ -1,9 +1,13 @@
-pyygle (0.3.1) UNRELEASED; urgency=low
+pyygle (0.3.1) unstable; urgency=low
 
+  [ J. Hamatoma ]
   * package renamed to pyygle_src
   * buildUrl(): application specific handling of links
 
- -- J. Hamatoma <hama@siduction.net>  Wed, 20 Mar 2013 07:25:35 +0100
+  [ Alf Gaida ]
+  * rebuild closes #1119
+
+ -- Alf Gaida <agaida@siduction.org>  Wed, 20 Mar 2013 23:19:22 +0100
 
 pyygle (0.2) unstable; urgency=low
 
