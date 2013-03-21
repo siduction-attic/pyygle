@@ -1,10 +1,14 @@
-pyygle (0.3.5) UNRELEASED; urgency=low
+pyygle (0.3.5) unstable; urgency=low
 
+  [ J. Hamatoma ]
   * fix: wrong setting of PYTHONPATH
   * /usr/bin/pyggle (without extension .py)
   * closes #1122
 
- -- J. Hamatoma <hama@siduction.net>  Thu, 21 Mar 2013 23:58:25 +0100
+  [ Alf Gaida ]
+  * rebuild closes #1124 
+
+ -- Alf Gaida <agaida@siduction.org>  Fri, 22 Mar 2013 00:40:15 +0100
 
 pyygle (0.3.3) unstable; urgency=low
 
