@@ -1,3 +1,9 @@
+pyygle (0.3.4) UNRELEASED; urgency=low
+
+  * fix: wrong setting of PYTHONPATH
+
+ -- J. Hamatoma <hama@siduction.net>  Thu, 21 Mar 2013 13:43:24 +0100
+
 pyygle (0.3.3) unstable; urgency=low
 
   * added a debian-section to debian/copyrights

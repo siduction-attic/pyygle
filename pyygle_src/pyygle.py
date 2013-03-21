@@ -7,7 +7,6 @@ Created on 04.11.2012
 
 import sys, os.path, time, re
 import cProfile, pstats
-sys.path.append('/usr/share/pyygle/src')
 import sqlite3db
 from filecrawler import FileCrawler, RExprDocFinder
 from searchengine import SearchEngine
