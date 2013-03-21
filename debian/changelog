@@ -1,3 +1,11 @@
+pyygle (0.3.6) unstable; urgency=low
+
+  * really renamed pyygle
+  * refs #1122
+  * refs #1124
+
+ -- Alf Gaida <agaida@siduction.org>  Fri, 22 Mar 2013 00:50:02 +0100
+
 pyygle (0.3.5) unstable; urgency=low
 
   [ J. Hamatoma ]
