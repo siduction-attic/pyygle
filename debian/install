@@ -1,5 +1,5 @@
-doc				usr/share/pyygle
+doc			usr/share/pyygle
 pyygle_src		usr/share/pyygle
-pyygle_src/pyygle.py	usr/bin/pyggle
+pyygle_src/pyygle	usr/bin/
 
 
