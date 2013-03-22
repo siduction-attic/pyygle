@@ -42,10 +42,10 @@ class Test(unittest.TestCase):
             os.remove(dbName)
         logname = '/tmp/testpyggle.02.log'
         prog = Pyygle()
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'db', 'create']
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'db', 'create']
         prog.run(argv)
         self.assertTrue(os.path.exists(dbName))
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'db', 'statistic']
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'db', 'statistic']
         prog.run(argv)
         stats = prog._task._dbStats
         self.checkStatistic(0, 0, 0, 0, stats)
@@ -56,7 +56,7 @@ class Test(unittest.TestCase):
             os.remove(dbName)
         logname = '/tmp/testpyggle.02.log'
         base = self.buildTree()
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'parse', 
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'parse', 
             'fill-db', base, r'\d']
         prog = Pyygle()
         prog.run(argv)
@@ -85,23 +85,23 @@ class Test(unittest.TestCase):
         fnOutput = '/tmp/pyygle_test.03.htm'
         prog = Pyygle()
         
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'parse', 
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'parse', 
             'fill-db', '--no-ext-is-text', base2]
         prog.run(argv)
         
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'parse', 
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'parse', 
             'fill-db', '--add', base, r'[.]htm']
         prog = Pyygle()
         prog.run(argv)
         
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'search', 
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'search', 
             '--output=' + fnOutput, '--url=file://home/wsl6/py/pyygle/test/',
             'simple', 'search', 'normalized']
         prog = Pyygle()
         prog.run(argv)
         self.compareFiles(fnOutput, 'resources/pyygle_doc_01.html')
 
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'search', 
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'search', 
             '--output=' + fnOutput, '--url=file://home/wsl6/py/pyygle/test/',
             'normalized']
         prog = Pyygle()
@@ -128,7 +128,7 @@ and
 word
 -table
 ''')
-        argv = ['pyygle.py', '--db=' + dbName, '--logfile=' + logname, 'search', 
+        argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'search', 
             '--output=' + fnOutput, '--url=file://home/wsl6/py/pyygle/test/',
             '--no-frame', '--query=' + fnQuery]
         prog.run(argv)

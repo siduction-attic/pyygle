@@ -1,3 +1,9 @@
+pyygle (0.3.7) unstable; urgency=low
+
+  * typo pyyggle --> pyygle 
+
+ -- Alf Gaida <agaida@siduction.org>  Fri, 22 Mar 2013 03:25:42 +0100
+
 pyygle (0.3.6) unstable; urgency=low
 
   * really renamed pyygle

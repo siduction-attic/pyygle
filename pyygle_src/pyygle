@@ -15,7 +15,7 @@ VERSION = '0.3 (2012.12.01)'
 class Options:
     def __init__(self, progName):
         self._progName = progName
-        self._logfile = '/tmp/pyyggle.log'
+        self._logfile = '/tmp/pyygle.log'
         self._db = '/var/lib/pyygle/default.db'
         self._verbose = True
         
@@ -26,15 +26,15 @@ def helpMe(opts, msg):
     @param opts: the options
     @param msg:  None or the error message 
     '''
-    print '''pyyggle, a simple search engine (C) Hamatoma 2012 Version %s
+    print '''pyygle, a simple search engine (C) Hamatoma 2012 Version %s
 usage: %s <global_opts> mode <args>
 <mode>:
   db      adminstrates the database
   parse   traverse a file tree for indexing text files
   search  search in the database
 <global_opts>:
-  --db=<path>          name of the database. Default: /var/lib/pyyggle/pyyggle.db
-  --logfile=<file>     name of the logfile. Default: /tmp/pyyggle.log
+  --db=<path>          name of the database. Default: /var/lib/pyygle/pyygle.db
+  --logfile=<file>     name of the logfile. Default: /tmp/pyygle.log
   --quiet              no logging of more info
 <db-mode-args>:
   create               initializes the database: create the tables
