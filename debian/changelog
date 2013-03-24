@@ -1,11 +1,15 @@
-pyygle (0.3.9) UNRELEASED; urgency=low
+pyygle (0.3.9) unstable; urgency=low
 
+  [ J. Hamatoma ]
   * script in /usr/bin/pyygle
   * better portability of the tests
   * fix: package name pyygle_src in tests
   * closes: #1127
 
- -- J. Hamatoma <hama@siduction.net>  Sun, 24 Mar 2013 15:27:34 +0100
+  [ Alf Gaida ]
+  * rebuild closes #1128 and closes #1124 
+
+ -- Alf Gaida <agaida@siduction.org>  Sun, 24 Mar 2013 18:19:40 +0100
 
 pyygle (0.3.7) unstable; urgency=low
 
