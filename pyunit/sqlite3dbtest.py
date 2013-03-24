@@ -4,8 +4,8 @@ Created on 10.11.2012
 @author: hm
 '''
 import unittest, os.path
-from source.sqlite3db import SqLite3Db
-from source.pyygle import Logger
+from pyygle_src.sqlite3db import SqLite3Db
+from pyygle_src.pyygle import Logger
 
 class Test(unittest.TestCase):
 #    def __init__(self):

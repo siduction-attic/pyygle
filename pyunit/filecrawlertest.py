@@ -5,8 +5,8 @@ Created on 15.11.2012
 '''
 import unittest, os.path
 
-from source.pyygle import Logger
-from source.filecrawler import RExprDocFinder, FileCrawler
+from pyygle_src.pyygle import Logger
+from pyygle_src.filecrawler import RExprDocFinder, FileCrawler
 #import src.filecrawler
 #import src.pyygle
 

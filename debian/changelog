@@ -1,3 +1,11 @@
+pyygle (0.3.8) UNRELEASED; urgency=low
+
+  * script in /usr/bin/pyygle
+  * better portability of the tests
+  * fix: package name pyygle_src in tests
+
+ -- J. Hamatoma <hama@siduction.net>  Sun, 24 Mar 2013 15:07:40 +0100
+
 pyygle (0.3.7) unstable; urgency=low
 
   * typo pyyggle --> pyygle 

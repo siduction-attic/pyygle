@@ -1,0 +1,4 @@
+#! /bin/bash
+
+export PYTHONPATH=/usr/share/pyygle/pyygle_src:/usr/share/pyygle:$PYTHONPATH
+python /usr/share/pyygle/pyygle_src/pyygle.py $*

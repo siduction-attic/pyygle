@@ -4,7 +4,7 @@ Created on 20.11.2012
 @author: hm
 '''
 import unittest
-from source.searchengine import SearchEngine , cmpTuples
+from pyygle_src.searchengine import SearchEngine , cmpTuples
 
 class DummyDb:
     def __init__(self, wordlist):

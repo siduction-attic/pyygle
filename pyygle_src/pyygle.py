@@ -11,7 +11,7 @@ import sqlite3db
 from filecrawler import FileCrawler, RExprDocFinder
 from searchengine import SearchEngine
 
-VERSION = '0.3 (2012.12.01)'
+VERSION = '0.3.8 (2013.03.24)'
 class Options:
     def __init__(self, progName):
         self._progName = progName

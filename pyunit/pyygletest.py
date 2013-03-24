@@ -5,11 +5,14 @@ Created on 17.11.2012
 '''
 import unittest,os.path
 
-import source.pyygle
-from source.pyygle import Pyygle
+import pyygle_src.pyygle
+from pyygle_src.pyygle import Pyygle
 
 class Test(unittest.TestCase):
 
+    def setUp(self):
+        self._resources = 'resources/' if os.path.exists('resources') else 'pyunit/resources/'
+        
     def buildFile(self, name, content):
         fp = open(name, "w");
         fp.write(content)
@@ -80,8 +83,8 @@ class Test(unittest.TestCase):
     def testSearch(self):
         dbName = '/tmp/pyygle-doc.db'
         logname = '/tmp/testpyggle.03.log'
-        base = '../doc'
-        base2 = '../debian'
+        base = '../doc' if os.path.exists('../doc') else 'doc'
+        base2 = '../debian' if os.path.exists('../debian') else 'debian'
         fnOutput = '/tmp/pyygle_test.03.htm'
         prog = Pyygle()
         
@@ -99,14 +102,14 @@ class Test(unittest.TestCase):
             'simple', 'search', 'normalized']
         prog = Pyygle()
         prog.run(argv)
-        self.compareFiles(fnOutput, 'resources/pyygle_doc_01.html')
+        self.compareFiles(fnOutput, self._resources + 'pyygle_doc_01.html')
 
         argv = ['pyygle', '--db=' + dbName, '--logfile=' + logname, 'search', 
             '--output=' + fnOutput, '--url=file://home/wsl6/py/pyygle/test/',
             'normalized']
         prog = Pyygle()
         prog.run(argv)
-        self.compareFiles(fnOutput, 'resources/pyygle_doc_02.html')
+        self.compareFiles(fnOutput, self._resources + 'pyygle_doc_02.html')
 
     def writeFile(self, filename, content):
         fp = open(filename, "w")
@@ -132,7 +135,7 @@ word
             '--output=' + fnOutput, '--url=file://home/wsl6/py/pyygle/test/',
             '--no-frame', '--query=' + fnQuery]
         prog.run(argv)
-        self.compareFiles(fnOutput, 'resources/pyygle_doc_03.html')
+        self.compareFiles(fnOutput, self._resources + 'pyygle_doc_03.html')
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDb']
     unittest.main()
