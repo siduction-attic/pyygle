@@ -285,7 +285,7 @@ create table docTree (
         @param chapters:  the list of chapters
         '''
         documents = dict()
-        docTrees = ()
+        docTrees = []
         sql = '''select doc_id,doc_type,link,date,size,doctree_id 
             from document where doc_id in (%s)''' % (docList,)
         cursor.execute(sql)
@@ -303,7 +303,7 @@ create table docTree (
                 else:
                     docTreeList += ','
                 docTreeList += str(docTreeId)
-                docTrees += (docTreeId,)
+                docTrees.append(docTreeId)
         
         self.completeDocTrees(cursor, docTreeList, documents)        
         for chapter in chapters:
@@ -316,17 +316,17 @@ create table docTree (
         @return: a list of Chapter instances
         '''
         sql = self.buildSelectChapter(idList)
-        chapters = ()
-        docIds = ()
+        chapters = []
+        docIds = []
         cursor.execute(sql)
         while True:
             row = cursor.fetchone()
             if row is None:
                 break
             chapter = Chapter(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
-            chapters += (chapter,)
+            chapters.append(chapter)
             if not (chapter._docId in docIds):
-                docIds += (chapter._docId,)
+                docIds.append(chapter._docId)
         docList = None
         for doc in docIds:
             if docList is None:

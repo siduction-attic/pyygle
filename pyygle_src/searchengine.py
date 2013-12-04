@@ -29,7 +29,7 @@ class SearchEngine(object):
         @param db: the database with the search index
         '''
         self._db = db
-        self._resultsPerPage = 5
+        self._resultsPerPage = 50
         self._indexCurrentPage = 0
         self._pageNo = 0
         self._lengthOfTheSpot = 150
@@ -144,7 +144,7 @@ class SearchEngine(object):
             for hit in hitList:
                 text = self.buildExcerpt(hit[0], hit[1], source)
                 pattern = r'\b(' + wordList + r')\b'
-                text = re.sub(pattern, "\v\\1\t", text)
+                text = re.sub(pattern, "\v\\1\t", text, flags=re.IGNORECASE)
                 text = saxutils.escape(text)
                 text = text.replace("\v", '<b>').replace("\t", '</b>')
                 html += '<p class="sm_hit">' + text + "</p>\n"
