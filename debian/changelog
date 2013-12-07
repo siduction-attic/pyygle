@@ -1,3 +1,10 @@
+pyygle (2013.12.07) unstable; urgency=medium
+
+  * introduce pairstyle for searchresults
+  * put searchresults in divs 
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 07 Dec 2013 02:59:12 +0100
+
 pyygle (2013.12.03) unstable; urgency=low
 
   * results per page changed to 50
