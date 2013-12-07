@@ -133,7 +133,7 @@ class SearchEngine(object):
         '''
         link = saxutils.escape(link)
         title = saxutils.escape(title)
-        html =  '<div class=sm_item_%s>' % (pairstyle)
+        html =  '<div class="sm_item_%s">' % (pairstyle)
         html += '    <p class="sm_link"><a href="%s">%s</a></p>%s' % (link, title, "\n")
         html += '    <p class="sm_doc">%s</p>%s' % (docName, "\n")
         hitList = ()
