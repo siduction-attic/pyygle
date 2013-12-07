@@ -37,11 +37,13 @@ class SearchEngine(object):
         self._rexprFirstWord = re.compile(r'^(\w+|\W+\w*)')
         self._rexprLastWord = re.compile(r'(\W*\w+|\W+)$')
      
-    def buildExcerpt(self, index, length, text):
+    def buildExcerpt(self, index, length, text, prefixHit, suffixHit):
         '''Builds an excerpt from the text around the word at index.
         @param index: the index of the word in the result
         @param length: the length of the word
         @param text: the full text
+        @param prefixHit: this marker will be inserted in front of the hit
+        @param suffixHit: this marker will be inserted behind the hit
         @return: a phrase around the given word
         '''
         lengthOfSpot = self._lengthOfTheSpot
@@ -90,23 +92,34 @@ class SearchEngine(object):
                     pos = matcher.end()
                     head = head[pos:]
                     
-        return head + text[index:index+length] + tail
+        return head + prefixHit + text[index:index+length] + suffixHit + tail
         
-    def findFirstHitOfTheWord(self, word, text):
-        '''Finds the first find spot of the word.
+    def findFirstHitOfTheWord(self, isFullText, phrase, text):
+        '''Finds the first find spot of the phrase.
         More precisely: all similar words will be searched.
-        @param word: the word to search
-        @param text: the text for searching
+        @param isFullText: True: a full text search should be done.
+                           False: a word search should be done
+        @param phrase:     the phrase or word to search
+        @param text:       the text for searching
         @result: None: word or phrase not found<br>
-                a tuple: (offset in the text, length of the matching word, wordlist)
+                a tuple: (offset in the text, length of the matching phrase, wordlist)
         '''
         rc = None
-        wordList = self._db.getRelatedWords(word)
-        words = r'\b(%s)\b' % (wordList,)
-        matcher = re.search(words, text, re.IGNORECASE)
-        if matcher != None:
-            position = matcher.start()
-            rc = (position, matcher.end() - position, wordList)
+        position = None
+        if isFullText:
+            position = text.lower().find(phrase.lower())
+            length = len(phrase)
+        else:
+            word = re.sub(r'\W', "", phrase)
+            wordList = self._db.getRelatedWords(word)
+            words = r'\b(%s)\b' % (wordList,)
+            matcher = re.search(words, text, re.IGNORECASE)
+            if matcher != None:
+                position = matcher.start()
+                phrase = wordList
+                length = matcher.end() - position
+        if position != None:
+            rc = (position, length, phrase)
         return rc 
     
     def findHits(self, words, source, title, docName, link):
@@ -127,9 +140,10 @@ class SearchEngine(object):
         for word in words:
             word = word.strip()
             if word != '' and not matcher.match(word):
-                if word.startswith('='):
+                isPhrase = word.startswith('=')
+                if isPhrase:
                     word = word[1:]
-                hit = self.findFirstHitOfTheWord(word, source)
+                hit = self.findFirstHitOfTheWord(isPhrase, word, source)
                 if hit != None:
                     hitList += (hit,)
                     if wordList is None:
@@ -142,9 +156,7 @@ class SearchEngine(object):
             html = None
         else:
             for hit in hitList:
-                text = self.buildExcerpt(hit[0], hit[1], source)
-                pattern = r'\b(' + wordList + r')\b'
-                text = re.sub(pattern, "\v\\1\t", text, flags=re.IGNORECASE)
+                text = self.buildExcerpt(hit[0], hit[1], source, "\v", "\t")
                 text = saxutils.escape(text)
                 text = text.replace("\v", '<b>').replace("\t", '</b>')
                 html += '<p class="sm_hit">' + text + "</p>\n"

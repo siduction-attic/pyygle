@@ -1,3 +1,11 @@
+pyygle (2013.12.04) unstable; urgency=low
+
+  * non alpha characters in words will be ignored
+  * correct results for full text search
+  * improvements for displaying the search phrase in the hit
+
+ -- J. Hamatoma <hama@siduction.net>  Sat, 07 Dec 2013 10:22:14 +0100
+
 pyygle (2013.12.03) unstable; urgency=low
 
   * results per page changed to 50

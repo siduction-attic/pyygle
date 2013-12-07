@@ -116,17 +116,16 @@ class SqlDB:
                 op = "\nintersect "
             elif phrase == '|' or phrase.lower() == 'or':
                 op = "\nunion "
-            elif phrase.startswith('=') or re.search(r'\W', phrase) and not phrase.startswith('-'):
+            elif phrase.startswith('='):
                 # search a phrase:
                 if op is not None:
                     sql += op
-                if phrase.startswith('='):
-                    phrase = phrase[1:]
+                phrase = phrase[1:]
                 phrase = '%' + phrase.replace('%', '_').replace("'", '_').replace('*', '%') + '%'
                 sql += "select chapter_id from chapter where pure_text like '" + phrase + "'"
                 op = "\nintersect "
             else:
-                # seerch a word
+                # search a word
                 valid = True
                 if phrase.startswith('-'):
                     phrase = phrase[1:]
@@ -138,7 +137,8 @@ class SqlDB:
                 if valid:
                     if op is not None:
                         sql += op
-                    sql += self.buildSelectWords(phrase)
+                    word = re.sub(r'\W', "", phrase)
+                    sql += self.buildSelectWords(word)
                     op = "\nintersect "
         if delayedExlude is not None:
             sql += "\nexcept " + self.buildSelectWords(delayedExlude)
