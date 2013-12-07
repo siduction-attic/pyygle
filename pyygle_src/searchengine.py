@@ -143,7 +143,6 @@ class SearchEngine(object):
         if hitList is None:
             html = None
         else:
-            pair = 0
             for hit in hitList:
                 text = self.buildExcerpt(hit[0], hit[1], source)
                 pattern = r'\b(' + wordList + r')\b'

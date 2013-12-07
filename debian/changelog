@@ -1,3 +1,9 @@
+pyygle (2013.12.07.1) unstable; urgency=medium
+
+  * removed a wrong pair-line, refs #1401
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 07 Dec 2013 03:53:46 +0100
+
 pyygle (2013.12.07) unstable; urgency=medium
 
   * introduce pairstyle for searchresults
