@@ -122,18 +122,20 @@ class SearchEngine(object):
             rc = (position, length, phrase)
         return rc 
     
-    def findHits(self, words, source, title, docName, link):
+    def findHits(self, words, source, title, docName, link, pairstyle):
         '''Builds a html text for the first find spot of all given words.
         @param words: a list of words to search and mark
         @param title: the title of the text
         @param source: the full text of the chapter
         @param link: the link of the chapter
+        @param pairstyle: pair or impair
         @return the html text of the find spots
         '''
         link = saxutils.escape(link)
         title = saxutils.escape(title)
-        html = '<p class="sm_link"><a href="%s">%s</a></p>%s' % (link, title, "\n")
-        html += '<p class="sm_doc">%s</p>%s' % (docName, "\n")
+        html =  '<div class=sm_item_%s>' % (pairstyle)
+        html += '    <p class="sm_link"><a href="%s">%s</a></p>%s' % (link, title, "\n")
+        html += '    <p class="sm_doc">%s</p>%s' % (docName, "\n")
         hitList = ()
         wordList = None
         matcher = re.compile(r'((or|and|[&|])$|-)', re.IGNORECASE)
@@ -159,7 +161,8 @@ class SearchEngine(object):
                 text = self.buildExcerpt(hit[0], hit[1], source, "\v", "\t")
                 text = saxutils.escape(text)
                 text = text.replace("\v", '<b>').replace("\t", '</b>')
-                html += '<p class="sm_hit">' + text + "</p>\n"
+                html += '    <p class="sm_hit">' + text + "</p>\n"
+            html += '</div> '
         return html
     
     def joinHits(self, hitList):
@@ -213,6 +216,7 @@ class SearchEngine(object):
         html = '' if not withFrame else self.buildHtmlHeader(None)
         chapters = db.find(phrases, self._indexCurrentPage, self._indexCurrentPage + count)
         ix = 0
+        pair = 0
         if chapters is not None:
             for chapter in chapters:
                 docName = chapter._document._link
@@ -222,7 +226,9 @@ class SearchEngine(object):
                     link = urlHandler.buildUrl(docName, anchor)
                 else:
                     link = url + docName + anchor
-                hits = self.findHits(phrases, chapter._pureText, chapter._title, node, link)
+                pair +=1
+                pairstyle = pair % 2
+                hits = self.findHits(phrases, chapter._pureText, chapter._title, node, link, pairstyle)
                 if hits != None:
                     ix += 1
                     if ix >= self._indexCurrentPage:

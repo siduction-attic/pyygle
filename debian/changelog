@@ -1,10 +1,24 @@
-pyygle (2013.12.04) unstable; urgency=low
+pyygle (2013.12.07.2) unstable; urgency=low
 
   * non alpha characters in words will be ignored
   * correct results for full text search
   * improvements for displaying the search phrase in the hit
 
  -- J. Hamatoma <hama@siduction.net>  Sat, 07 Dec 2013 10:22:14 +0100
+
+pyygle (2013.12.07.1) unstable; urgency=medium
+
+  * removed a wrong pair-line, refs #1401
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 07 Dec 2013 03:53:46 +0100
+
+pyygle (2013.12.07) unstable; urgency=medium
+
+  * introduce pairstyle for searchresults
+  * put searchresults in divs
+
+ -- Alf Gaida <agaida@siduction.org>  Sat, 07 Dec 2013 02:59:12 +0100
+>>>>>>> b42f473e4099ed0c1d8d3b43350a912d36b7bc9f
 
 pyygle (2013.12.03) unstable; urgency=low
 
@@ -24,13 +38,13 @@ pyygle (0.3.9) unstable; urgency=low
   * closes: #1127
 
   [ Alf Gaida ]
-  * rebuild closes #1128 and closes #1124 
+  * rebuild closes #1128 and closes #1124
 
  -- Alf Gaida <agaida@siduction.org>  Sun, 24 Mar 2013 18:19:40 +0100
 
 pyygle (0.3.7) unstable; urgency=low
 
-  * typo pyyggle --> pyygle 
+  * typo pyyggle --> pyygle
 
  -- Alf Gaida <agaida@siduction.org>  Fri, 22 Mar 2013 03:25:42 +0100
 
@@ -50,15 +64,15 @@ pyygle (0.3.5) unstable; urgency=low
   * closes #1122
 
   [ Alf Gaida ]
-  * rebuild closes #1124 
+  * rebuild closes #1124
 
  -- Alf Gaida <agaida@siduction.org>  Fri, 22 Mar 2013 00:40:15 +0100
 
 pyygle (0.3.3) unstable; urgency=low
 
   * added a debian-section to debian/copyrights
-  * debian/control homepage added 
-  * leftover lintian warning, this should be fixed: 
+  * debian/control homepage added
+  * leftover lintian warning, this should be fixed:
     W: pyygle: script-with-language-extension usr/bin/pyygle.py
   * .gitignore added
   * closes #1119
@@ -67,14 +81,14 @@ pyygle (0.3.3) unstable; urgency=low
 
 pyygle (0.3.2) unstable; urgency=low
 
-  * added myself as uploader, fixes 
+  * added myself as uploader, fixes
     - W: pyygle source: changelog-should-mention-nmu
-    - W: pyygle source: source-nmu-has-incorrect-version-number 0.3.1 
+    - W: pyygle source: source-nmu-has-incorrect-version-number 0.3.1
   * fixed and extended short description, fixes
     W: pyygle: description-synopsis-starts-with-article
   * set Section: web, fixes
     E: pyygle: section-is-dh_make-template
-  * set compat-level to 9 
+  * set compat-level to 9
 
  -- Alf Gaida <agaida@siduction.org>  Wed, 20 Mar 2013 23:54:31 +0100
 
