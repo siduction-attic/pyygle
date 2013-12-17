@@ -1,3 +1,10 @@
+pyygle (2013.12.17) unstable; urgency=medium
+
+  * rebuild with new code
+  * Standards 3.9.5
+
+ -- Alf Gaida <agaida@siduction.org>  Tue, 17 Dec 2013 22:13:39 +0100
+
 pyygle (2013.12.07.3) unstable; urgency=low
 
   * html syntax error in hit list
